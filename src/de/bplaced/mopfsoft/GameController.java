@@ -7,12 +7,15 @@ import java.io.FileReader;
 import java.io.IOException;
 import java.io.InputStream;
 
+import de.bplaced.mopfsoft.blocks.Block;
+
+
 public class GameController {
 
 	private String[] players = new String[0];
 	private int maxPlayers;
 	private String mapName;
-	private int[][] pitchArray;
+	private Block[][] pitchArray;
 	private String description;
 	private File mapPreviewFile;
 	
@@ -72,7 +75,7 @@ public class GameController {
 			String topLine = text.split(";")[0];
 			int xMax = Integer.parseInt(topLine.split(":")[0]);
 			int yMax = Integer.parseInt(topLine.split(":")[1]);
-			pitchArray = new int[xMax][yMax];
+			pitchArray = new Block[xMax][yMax];
 			this.mapName = file.getName().split("\\.")[0];
 			System.out.println(mapName);
 			this.description = topLine.split(":")[2];
@@ -80,7 +83,7 @@ public class GameController {
 			String pitch = text.split(";")[1];
 			for (j = 0; j<yMax; j++) {
 				for (i=0; i< xMax; i++) {
-					pitchArray[i][j] = Integer.parseInt(pitch.split(":")[i+(j*xMax)]);
+					pitchArray[i][j] = Block.getBlock(Integer.parseInt(pitch.split(":")[i+(j*xMax)]));
 				}
 				j++;
 				
@@ -108,8 +111,8 @@ public class GameController {
 		return mapName;
 	}
 	
-	public void changeField(int x, int y, int type) {
-		pitchArray[x][y] = type;
+	public void changeField(int x, int y, Block block) {
+		pitchArray[x][y] = block;
 	}
 	
 	public String getMapDescription() {
