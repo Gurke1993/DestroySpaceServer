@@ -3,6 +3,7 @@ package de.bplaced.mopfsoft;
 public class GameLoop extends Thread{
 
 	
+	@SuppressWarnings("unused")
 	private GameController gameController;
 
 

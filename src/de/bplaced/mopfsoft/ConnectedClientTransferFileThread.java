@@ -12,6 +12,7 @@ public class ConnectedClientTransferFileThread extends Thread{
 	  DataOutputStream out;
 	  DataInputStream in;
 	  ServerThread server;
+	@SuppressWarnings("unused")
 	private ConnectedClientThread thread;
 
 	  public ConnectedClientTransferFileThread(ServerThread server, Socket s, ConnectedClientThread thread) throws IOException {
