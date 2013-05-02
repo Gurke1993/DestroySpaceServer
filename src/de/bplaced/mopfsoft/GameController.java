@@ -83,7 +83,7 @@ public class GameController {
 			String pitch = text.split(";")[1];
 			for (j = 0; j<yMax; j++) {
 				for (i=0; i< xMax; i++) {
-					pitchArray[i][j] = Block.getBlock(Integer.parseInt(pitch.split(":")[i+(j*xMax)]));
+					pitchArray[i][j] = Block.getNewBlock(i,j,Integer.parseInt(pitch.split(":")[i+(j*xMax)]));
 				}
 				j++;
 				
