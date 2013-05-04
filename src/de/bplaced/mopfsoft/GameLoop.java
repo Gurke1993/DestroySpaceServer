@@ -9,7 +9,6 @@ import de.bplaced.mopfsoft.entitys.Player;
 
 public class GameLoop extends Thread {
 
-	@SuppressWarnings("unused")
 	private GameController gameController;
 	private Queue<ClientUpdate> clientUpdateQueue;
 
@@ -19,6 +18,7 @@ public class GameLoop extends Thread {
 
 	// GameTick
 	public void run() {
+		long startTime = System.currentTimeMillis();
 
 		ClientUpdate clientUpdate;
 		String[] updateAsArray;
@@ -62,6 +62,14 @@ public class GameLoop extends Thread {
 		for (Entity changedEntity : changedEntitys) {
 			// TODO
 			gameController.getServer().serverThread.broadcast("");
+		}
+		
+		
+		//Wait if to fast
+		try {
+			this.wait(100-(System.currentTimeMillis()-startTime));
+		} catch (InterruptedException e) {
+			e.printStackTrace();
 		}
 
 	}

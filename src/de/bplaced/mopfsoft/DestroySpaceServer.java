@@ -19,7 +19,6 @@ public class DestroySpaceServer {
 		String mainPortAsString = "27015";
 		String fileTransferPortAsString = "27016";
 		String path = "maps/DefaultMap.map";
-		int maxPlayers = 6;
 		
 		
 
@@ -37,19 +36,13 @@ public class DestroySpaceServer {
 				}
 			}
 			
-			if (args[i] == "-players") {
-				if (Util.isInteger(args[i+1])) {
-					maxPlayers = Integer.parseInt(args[i+1]);
-				}
-			}
-			
 			if (args[i] == "-map") {
 					path = args[i+1];
 			}
 		}
 		
 		try {
-			gameController = new GameController(path, maxPlayers,this);
+			gameController = new GameController(path,this);
 			serverThread = new ServerThread(Integer.parseInt(mainPortAsString), Integer.parseInt(fileTransferPortAsString), this);
 			System.out.println("Server is set.");
 			this.commandLineListener = new CommandLineListener(this);
@@ -87,8 +80,8 @@ public class DestroySpaceServer {
 			  case 0: {
 				  //Lobby info
 				  System.out.println("Client asked for game info. Answering...");
-				  String text = "1:0:1:"+gameController.getMapName()+":"+gameController.getMapDescription()+":"+gameController.getPlayerNames().length+":"+gameController.getMaxPlayer();
-				  for (String playerName: gameController.getPlayerNames()) {
+				  String text = "1:0:1:"+gameController.getMap().getMapName()+":"+gameController.getMap().getMapDescription()+":"+gameController.getMap().getPlayerNames().length+":"+gameController.getMap().getPlayers().size();
+				  for (String playerName: gameController.getMap().getPlayerNames()) {
 					  text += ":"+playerName;
 				  }
 				  serverThread.send(text, connectedClientThread);
@@ -110,7 +103,7 @@ public class DestroySpaceServer {
 				  case 2: {
 					  System.out.println("Sending fileinfo");
 					  //File information
-					  String text = "1:-1:0:"+gameController.getMapName()+".gif:"+gameController.getPreviewFile().length();
+					  String text = "1:-1:0:"+gameController.getMap().getMapName()+".gif:"+gameController.getMap().getPreviewImageFile().length();
 					  serverThread.send(text, connectedClientThread);
 					  break;
 				  }
@@ -118,7 +111,7 @@ public class DestroySpaceServer {
 				  case 3: {
 					  System.out.println("Starting transfer...");
 					  //Start FileTransfer from MapPreview
-					  connectedClientThread.getFileTransferThread().sendFile("maps/"+gameController.getMapName()+".gif");
+					  connectedClientThread.getFileTransferThread().sendFile("maps/"+gameController.getMap().getMapName()+".gif");
 					  break;
 				  }
 				  
