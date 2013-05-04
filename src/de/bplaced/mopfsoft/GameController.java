@@ -8,6 +8,8 @@ import java.io.IOException;
 import java.io.InputStream;
 
 import de.bplaced.mopfsoft.blocks.Block;
+import de.bplaced.mopfsoft.entitys.Entity;
+import de.bplaced.mopfsoft.entitys.Player;
 
 public class GameController {
 
@@ -17,14 +19,27 @@ public class GameController {
 	private Block[][] pitchArray;
 	private String description;
 	private File mapPreviewFile;
+	private GameLoop gameLoop;
+	private DestroySpaceServer server;
 
-	public GameController(String path, int maxPlayers) {
+	public GameController(String path, int maxPlayers, DestroySpaceServer server) {
+		this.server = server;
+		
 		this.maxPlayers = maxPlayers;
 		if (!loadMap(path)) {
 			System.out.println("Could not load map from file (" + path
 					+ ")!! Loading default.");
 			loadMap("maps/DefaultMap.map");
 		}
+	}
+	
+	/** Starts a new run of DestroySpace by enabling the game loop
+	 * 
+	 */
+	public void startGame() {
+		//Starts the game
+		this.gameLoop = new GameLoop(this);
+		gameLoop.start();
 	}
 
 	private boolean loadMap(String path) {
@@ -126,5 +141,24 @@ public class GameController {
 
 	public File getPreviewFile() {
 		return mapPreviewFile;
+	}
+
+	public GameLoop getGameLoop() {
+		return this.gameLoop;
+	}
+
+	public Player getPlayer(ConnectedClientThread issuer) {
+		// TODO Auto-generated method stub
+		return null;
+	}
+
+
+	public Entity[] getEntitys() {
+		// TODO Auto-generated method stub
+		return null;
+	}
+
+	public DestroySpaceServer getServer() {
+		return server;
 	}
 }

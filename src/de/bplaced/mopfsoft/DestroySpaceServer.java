@@ -7,6 +7,7 @@ public class DestroySpaceServer {
 
 	ServerThread serverThread;
 	GameController gameController;
+	private CommandLineListener commandLineListener;
 	/**
 	 * @param args
 	 */
@@ -48,10 +49,10 @@ public class DestroySpaceServer {
 		}
 		
 		try {
-			gameController = new GameController(path, maxPlayers);
+			gameController = new GameController(path, maxPlayers,this);
 			serverThread = new ServerThread(Integer.parseInt(mainPortAsString), Integer.parseInt(fileTransferPortAsString), this);
 			System.out.println("Server is set.");
-			CommandLineListener commandLineListener = new CommandLineListener();
+			this.commandLineListener = new CommandLineListener(this);
 			commandLineListener.start();
 			System.out.println("type 'stop' to stop the server...");
 		} catch (Exception e){
@@ -74,9 +75,12 @@ public class DestroySpaceServer {
 	
 	public synchronized void analyzeNewMessage(String message, ConnectedClientThread connectedClientThread) {
 		  if (message.split(":")[0].equals("0")) {
+			  
 			  message = message.split(":", 2)[1];
 			  System.out.println("New Message: "+message);
+			  
 			  int index = Integer.parseInt(message.split(":", 2)[0]);
+			  message = message.split(":", 2)[1];
 			  
 			  switch (index) {
 			  
@@ -88,6 +92,13 @@ public class DestroySpaceServer {
 					  text += ":"+playerName;
 				  }
 				  serverThread.send(text, connectedClientThread);
+				  break;
+			  }
+			  
+			  case 1: {
+				  //INGAME UPDATES FROM CLIENTS
+				  
+				  this.gameController.getGameLoop().queueClientUpdate(message, connectedClientThread);
 				  break;
 			  }
 			  

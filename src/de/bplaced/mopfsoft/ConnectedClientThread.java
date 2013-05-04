@@ -29,7 +29,7 @@ public class ConnectedClientThread extends Thread{
 	    String text;
 	    try {
 	      while((text = in.readUTF()) != null) {
-	        server.analyzeNewMessage(text, this);
+	        server.analyzeNewMessage(text+":"+System.currentTimeMillis(), this);
 	      
 	    }
 	    }
