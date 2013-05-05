@@ -7,13 +7,13 @@ public class GamefieldChange extends GameChange{
 	
 	private final int x;
 	private final int y;
-	private final int id;
+	private final int bid;
 
-	public GamefieldChange(int x, int y, int id, Entity issuer) {
+	public GamefieldChange(int x, int y, int bid, Entity issuer) {
 		super(issuer);
 		this.x = x;
 		this.y = y;
-		this.id = id;
+		this.bid = bid;
 	}
 	
 	public int getX() {
@@ -24,12 +24,12 @@ public class GamefieldChange extends GameChange{
 		return y;
 	}
 	
-	public int getId() {
-		return id;
+	public int getBid() {
+		return bid;
 	}
 	
 	@Override
 	public String toString() {
-		return super.toString()+":x="+x+":y="+y+":id="+id;
+		return super.toString()+"type=gamefieldchange"+":x="+x+":y="+y+":bid="+bid;
 	}
 }

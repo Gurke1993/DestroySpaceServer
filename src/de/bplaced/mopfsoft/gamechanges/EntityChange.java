@@ -17,6 +17,6 @@ public class EntityChange extends GameChange{
 	
 	@Override
 	public String toString() {
-		return super.toString()+":entity="+entity;
+		return super.toString()+"type=entitychange"+":entity="+entity;
 	}
 }
