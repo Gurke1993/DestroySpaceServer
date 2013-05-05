@@ -1,6 +1,7 @@
 package de.bplaced.mopfsoft;
 
 import java.util.ArrayList;
+import java.util.LinkedList;
 import java.util.List;
 import java.util.Map;
 import java.util.Queue;
@@ -13,7 +14,7 @@ public class GameLoop extends Thread {
 
 	private static final long loopTime = 100;
 	private GameController gameController;
-	private Queue<ClientUpdate> clientUpdateQueue;
+	private Queue<ClientUpdate> clientUpdateQueue = new LinkedList<ClientUpdate>();
 
 	public GameLoop(GameController gameController) {
 		this.gameController = gameController;
@@ -63,7 +64,7 @@ public class GameLoop extends Thread {
 		
 		//Wait if to fast
 		try {
-			this.wait(loopTime-(System.currentTimeMillis()-startTime));
+			Thread.sleep(loopTime-(System.currentTimeMillis()-startTime));
 		} catch (InterruptedException e) {
 			e.printStackTrace();
 		}

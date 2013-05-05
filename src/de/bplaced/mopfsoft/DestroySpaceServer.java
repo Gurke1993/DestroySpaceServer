@@ -1,6 +1,7 @@
 package de.bplaced.mopfsoft;
 
 
+import java.io.File;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
@@ -118,13 +119,14 @@ public class DestroySpaceServer {
 			serverThread.send(answer, player);
 		} else
 			
-		if (action.equals("getmappreviewinfo")) {
+		if (action.equals("getfiletransferinfo")) {
 
-			System.out.println("Sending mappreviewinfo");
+			System.out.println("Sending filetransferinfo");
 			
-			String answer = "action=givemappreviewinfo"
-					+":filename="+gameController.getMap().getMapName()+".gif"
-					+":filelength="+gameController.getMap().getPreviewImageFile().length();
+			String answer = "action=givefiletransferinfo"
+					+":filename="+args.get("filename")
+					+":filelength="+(new File(args.get("path"))).length()
+					+":path="+args.get("path");
 					
 			serverThread.send(answer, player);
 			
@@ -134,12 +136,14 @@ public class DestroySpaceServer {
 			
 			System.out.println("Starting transfer...");
 			
-			player.getFileClient().sendFile("maps/"+gameController.getMap().getMapName()+".gif");
+			player.getFileClient().sendFile(args.get("path"));
 		} else
 			
 		if (action.equals("closeserver")) {
 			serverThread.stop();
 		}
+			
+			
 		
 	}
 

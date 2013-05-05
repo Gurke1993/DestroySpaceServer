@@ -27,6 +27,9 @@ public class GameController {
 		//Starts the game
 		this.gameLoop = new GameLoop(this);
 		gameLoop.start();
+		System.out.println("Game started on the map "+map.getMapName()+" with "+connectedPlayers.size()+" playing!");
+		
+		server.serverThread.broadcast("action=loadupgame");
 	}
 	
 	public Map getMap() {
@@ -65,6 +68,10 @@ public class GameController {
 	 */
 	public List<String> getPlayerNames() {
 		List<String> playerNames = new ArrayList<String>();
+		if (connectedPlayers.isEmpty()) {
+			playerNames.add("NONE");
+			return playerNames;
+		}
 		for (ConnectedPlayer player: connectedPlayers) {
 			playerNames.add(player.getName());
 		}
