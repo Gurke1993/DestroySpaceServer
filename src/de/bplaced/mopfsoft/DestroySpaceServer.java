@@ -74,7 +74,7 @@ public class DestroySpaceServer {
 	 * @param message
 	 * @param player
 	 */
-	public synchronized void analyzeClientMessage(String message, ConnectedPlayer player) {
+	public synchronized void analyseClientMessage(String message, ConnectedPlayer player) {
 		
 		System.out.println("ClientSays:"+message);
 		
@@ -87,10 +87,10 @@ public class DestroySpaceServer {
 			args.put(argArray[0], argArray[1]);
 		}
 		
-		analyzeClientMessage(args, player);
+		analyseClientMessage(args, player);
 		
 	}
-	private void analyzeClientMessage(Map<String, String> args,
+	private void analyseClientMessage(Map<String, String> args,
 			ConnectedPlayer player) {
 
 		
@@ -135,6 +135,10 @@ public class DestroySpaceServer {
 			System.out.println("Starting transfer...");
 			
 			player.getFileClient().sendFile("maps/"+gameController.getMap().getMapName()+".gif");
+		} else
+			
+		if (action.equals("closeserver")) {
+			serverThread.stop();
 		}
 		
 	}
