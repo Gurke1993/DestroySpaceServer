@@ -2,13 +2,16 @@ package de.bplaced.mopfsoft;
 
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Map;
 import java.util.Queue;
 
-import de.bplaced.mopfsoft.entitys.Entity;
 import de.bplaced.mopfsoft.entitys.Player;
+import de.bplaced.mopfsoft.gamechanges.EntityChange;
+import de.bplaced.mopfsoft.gamechanges.GameChange;
 
 public class GameLoop extends Thread {
 
+	private static final long loopTime = 100;
 	private GameController gameController;
 	private Queue<ClientUpdate> clientUpdateQueue;
 
@@ -21,53 +24,46 @@ public class GameLoop extends Thread {
 		long startTime = System.currentTimeMillis();
 
 		ClientUpdate clientUpdate;
-		String[] updateAsArray;
-		List<String> gamefieldChanges = new ArrayList<String>();
-		List<Entity> changedEntitys = new ArrayList<Entity>();
+		Map <String,String> args;
+		List<GameChange> gameChanges = new ArrayList<GameChange>();
 
 		while ((clientUpdate = clientUpdateQueue.poll()) != null) {
 			// Process new client update
 
-			Player issuer = this.gameController.getPlayer(clientUpdate
-					.getIssuer());
+			Player issuer = clientUpdate.getIssuer().getPlayer();
 			issuer.setInitialPosition();
-			updateAsArray = clientUpdate.getTypeAndParameters();
-			if (updateAsArray[0].equalsIgnoreCase("move")) {
-				issuer.move(Integer.parseInt(updateAsArray[1]),
-						Integer.parseInt(updateAsArray[2]));
-			} else if (updateAsArray[0].equalsIgnoreCase("moveanduse")) {
-				issuer.use(Integer.parseInt(updateAsArray[3]));
-				issuer.move(Integer.parseInt(updateAsArray[1]),
-						Integer.parseInt(updateAsArray[2]));
-			} else if (updateAsArray[0].equalsIgnoreCase("use")) {
-				issuer.use(Integer.parseInt(updateAsArray[1]));
+			args = clientUpdate.getArgs();
+			if (args.get("type").equals("move")) {
+				issuer.move(Integer.parseInt(args.get("x")),
+						Integer.parseInt(args.get("y")));
+			} else if (args.get("type").equals("moveanduse")) {
+				issuer.use(Integer.parseInt(args.get("toolid")));
+				issuer.move(Integer.parseInt(args.get("x")),
+						Integer.parseInt(args.get("y")));
+			} else if (args.get("type").equals("use")) {
+				issuer.use(Integer.parseInt(args.get("toolid")));
 			}
 
-			// TODO Colissioncheck
+			//Process gamefield collisions
+			issuer.resolveWorldCollisions();
+			
+			//Process entity collisions
+			issuer.resolveEntityCollisions();
 
-			// TODO Follow up to Co check
-
-			if (issuer.hasMoved() && !changedEntitys.contains(issuer)) {
-				changedEntitys.add(issuer);
+			if (issuer.hasMoved() && !gameChanges.contains(issuer)) {
+				gameChanges.add(new EntityChange(issuer, issuer));
 			}
 		}
 
-		// Broadcast gamefield changes
-		for (String changeInGameField : gamefieldChanges) {
-			// TODO
-			gameController.getServer().serverThread.broadcast("");
-		}
-
-		// Broadcast Player positions
-		for (Entity changedEntity : changedEntitys) {
-			// TODO
-			gameController.getServer().serverThread.broadcast("");
+		// Broadcast game changes
+		for (GameChange gameChange : gameChanges) {
+			gameController.getServer().serverThread.broadcast(gameChange.toString());
 		}
 		
 		
 		//Wait if to fast
 		try {
-			this.wait(100-(System.currentTimeMillis()-startTime));
+			this.wait(loopTime-(System.currentTimeMillis()-startTime));
 		} catch (InterruptedException e) {
 			e.printStackTrace();
 		}
@@ -78,13 +74,14 @@ public class GameLoop extends Thread {
 	 * Queues a new client update in a queue. This queue will be processed in
 	 * the next gameLoop
 	 * 
-	 * @param message
-	 * @param issuer
+	 * @param args
+	 * @param player
 	 *            the thread referring to the connected Player
 	 */
-	public void queueClientUpdate(String message, ConnectedClientThread issuer) {
+	public void queueClientUpdate(Map<String, String> args,
+			ConnectedPlayer player) {
 		System.out.println("Got new client update... adding to stack...");
-		this.clientUpdateQueue.add(new ClientUpdate(issuer, message));
-
+		this.clientUpdateQueue.add(new ClientUpdate(player, args));
+		
 	}
 }

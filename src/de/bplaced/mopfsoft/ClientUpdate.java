@@ -1,24 +1,26 @@
 package de.bplaced.mopfsoft;
 
+import java.util.Map;
+
 public class ClientUpdate {
 
-	private final ConnectedClientThread issuer;
-	private final String[] updateAsArray;
+	private final ConnectedPlayer issuer;
+	private Map<String, String> args;
 
-	public ClientUpdate(ConnectedClientThread issuer, String updateAsString) {
+	public ClientUpdate(ConnectedPlayer issuer, Map<String,String> args) {
 		this.issuer = issuer;
-		this.updateAsArray = updateAsString.split(":");
+		this.args = args;
 		}
 
 	public String getType() {
-		return this.updateAsArray[0];
+		return args.get("type");
 	}
 	
-	public String[] getTypeAndParameters() {
-		return this.updateAsArray;
+	public Map<String,String> getArgs() {
+		return this.args;
 	}
 	
-	public ConnectedClientThread getIssuer() {
+	public ConnectedPlayer getIssuer() {
 		return this.issuer;
 	}
 }

@@ -5,18 +5,18 @@ import java.io.DataOutputStream;
 import java.io.IOException;
 import java.net.Socket;
 
-import de.bplaced.mopfsoft.entitys.Player;
-
 public class ConnectedClientThread extends Thread {
 	final Socket s;
 	DataOutputStream out;
 	DataInputStream in;
 	private final ServerThread server;
-	private ConnectedClientTransferFileThread connectedClientTransferThread;
-	private Player player;
+	private ConnectedPlayer player;
 
-	public ConnectedClientThread(ServerThread server, Socket s)
+	public ConnectedClientThread(ServerThread server, Socket s, ConnectedPlayer player)
 			throws IOException {
+		
+		this.player = player;
+		
 		// setup connection
 		this.server = server;
 		this.s = s;
@@ -27,30 +27,18 @@ public class ConnectedClientThread extends Thread {
 		
 
 	}
-	
-	public void setPlayer (Player player) {
-		this.player = player;
-	}
-	
-	public Player getPlayer() {
-		return this.player;
-	}
 
-	public void setConnectedClientTransferThread(ConnectedClientTransferFileThread thread) {
-		  connectedClientTransferThread = thread;
-	  }
+	public void run() {
+		String text;
+		try {
+			while ((text = in.readUTF()) != null) {
+				server.destroySpaceServer.analyzeClientMessage(
+						text + ":timerecieved=" + System.currentTimeMillis(), player);
 
-	  public void run() {
-	    String text;
-	    try {
-	      while((text = in.readUTF()) != null) {
-	        server.analyzeNewMessage(text+":"+System.currentTimeMillis(), this);
-	      
-	    }
-	    }
-	    catch(IOException e) {
-	      e.printStackTrace();
-	    }
+			}
+		} catch (IOException e) {
+			e.printStackTrace();
+		}
 	    server.closeConnection(this);
 	  }
 
@@ -62,10 +50,6 @@ public class ConnectedClientThread extends Thread {
 	      e.printStackTrace();
 	    }
 	  }
-
-	public ConnectedClientTransferFileThread getFileTransferThread() {
-		return connectedClientTransferThread;
-	}
 	  
 	  
 }

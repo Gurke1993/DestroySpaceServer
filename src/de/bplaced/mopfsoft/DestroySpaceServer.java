@@ -1,6 +1,10 @@
 package de.bplaced.mopfsoft;
 
 
+import java.util.HashMap;
+import java.util.List;
+import java.util.Map;
+
 import util.Util;
 
 public class DestroySpaceServer {
@@ -66,60 +70,73 @@ public class DestroySpaceServer {
 	}
 	
 	
-	public synchronized void analyzeNewMessage(String message, ConnectedClientThread connectedClientThread) {
-		  if (message.split(":")[0].equals("0")) {
-			  
-			  message = message.split(":", 2)[1];
-			  System.out.println("New Message: "+message);
-			  
-			  int index = Integer.parseInt(message.split(":", 2)[0]);
-			  message = message.split(":", 2)[1];
-			  
-			  switch (index) {
-			  
-			  case 0: {
-				  //Lobby info
-				  System.out.println("Client asked for game info. Answering...");
-				  String text = "1:0:1:"+gameController.getMap().getMapName()+":"+gameController.getMap().getMapDescription()+":"+gameController.getMap().getPlayerNames().length+":"+gameController.getMap().getPlayers().size();
-				  for (String playerName: gameController.getMap().getPlayerNames()) {
-					  text += ":"+playerName;
-				  }
-				  serverThread.send(text, connectedClientThread);
-				  break;
-			  }
-			  
-			  case 1: {
-				  //INGAME UPDATES FROM CLIENTS
-				  
-				  this.gameController.getGameLoop().queueClientUpdate(message, connectedClientThread);
-				  break;
-			  }
-			  
-			  case -1: {
-				  int index2 = Integer.parseInt(message.split(":", 3)[1]);
-				  
-				  switch (index2) {
-				  
-				  case 2: {
-					  System.out.println("Sending fileinfo");
-					  //File information
-					  String text = "1:-1:0:"+gameController.getMap().getMapName()+".gif:"+gameController.getMap().getPreviewImageFile().length();
-					  serverThread.send(text, connectedClientThread);
-					  break;
-				  }
-				  
-				  case 3: {
-					  System.out.println("Starting transfer...");
-					  //Start FileTransfer from MapPreview
-					  connectedClientThread.getFileTransferThread().sendFile("maps/"+gameController.getMap().getMapName()+".gif");
-					  break;
-				  }
-				  
-				  }
-			  }
-			  
-			  }
-		  }
+	/** This method gets called for every new clientside message. It processes the input and calls the correct functions
+	 * @param message
+	 * @param player
+	 */
+	public synchronized void analyzeClientMessage(String message, ConnectedPlayer player) {
+		
+		System.out.println("ClientSays:"+message);
+		
+		//Structure message
+		Map<String,String> args= new HashMap<String,String>();
+		
+		String[] argArray;
+		for (String split: message.split(":")) {
+			argArray = split.split("=");
+			args.put(argArray[0], argArray[1]);
+		}
+		
+		analyzeClientMessage(args, player);
+		
+	}
+	private void analyzeClientMessage(Map<String, String> args,
+			ConnectedPlayer player) {
+
+		
+		String action = args.get("action");
+		
+		if (action.equals("clientupdate")) {
+			this.gameController.getGameLoop().queueClientUpdate(args, player);
+		} else
+			
+		if (action.equals("getlobbyinfo")) {
+			System.out.println("Client asked for game info. Answering...");
+			String answer = "action=givelobbyinfo"
+					+":mapname="+gameController.getMap().getMapName()
+					+":mapdescription="+gameController.getMap().getMapDescription()
+					+":amountofplayers="+gameController.getPlayerNames().size()
+					+":maxamountofplayers="+gameController.getMap().getPlayers().size()
+					+":players=";
+			
+			List<String> playernames = gameController.getPlayerNames();
+			for (int i = 0; i<playernames.size(); i++) {
+				if (i!= 0) answer += ",";
+				answer += playernames.get(i);
+			}
+			
+			serverThread.send(answer, player);
+		} else
+			
+		if (action.equals("getmappreviewinfo")) {
+
+			System.out.println("Sending mappreviewinfo");
+			
+			String answer = "action=givemappreviewinfo"
+					+":filename="+gameController.getMap().getMapName()+".gif"
+					+":filelength="+gameController.getMap().getPreviewImageFile().length();
+					
+			serverThread.send(answer, player);
+			
+		} else 
+			
+		if (action.equals("starttransfer")) {
+			
+			System.out.println("Starting transfer...");
+			
+			player.getFileClient().sendFile("maps/"+gameController.getMap().getMapName()+".gif");
+		}
+		
 	}
 
 }

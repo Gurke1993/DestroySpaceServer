@@ -13,10 +13,10 @@ public class ConnectedClientTransferFileThread extends Thread{
 	  DataInputStream in;
 	  ServerThread server;
 	@SuppressWarnings("unused")
-	private ConnectedClientThread thread;
+	private final ConnectedPlayer player;
 
-	  public ConnectedClientTransferFileThread(ServerThread server, Socket s, ConnectedClientThread thread) throws IOException {
-		  this.thread = thread;
+	  public ConnectedClientTransferFileThread(ServerThread server, Socket s, ConnectedPlayer player) throws IOException{
+		  this.player = player;
 	    this.server = server;
 	    this.s = s;
 	    out = new DataOutputStream(s.getOutputStream());
