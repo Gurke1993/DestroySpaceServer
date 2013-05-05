@@ -32,7 +32,7 @@ public class ConnectedClientThread extends Thread {
 		String text;
 		try {
 			while ((text = in.readUTF()) != null) {
-				server.destroySpaceServer.analyzeClientMessage(
+				server.destroySpaceServer.analyseClientMessage(
 						text + ":timerecieved=" + System.currentTimeMillis(), player);
 
 			}
