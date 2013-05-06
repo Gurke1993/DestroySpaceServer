@@ -41,9 +41,11 @@ public class ConnectedClientTransferFileThread extends Thread{
 		  try {
 		  File file = new File(path);
 		  FileInputStream fileInputStream = new FileInputStream(file);
+		  
+		  restartOutputStream();
 	        long fileSize = file.length();
 	        long completed = 0;
-	        int step = 150000;
+	        int step = 15000;
 	 
 	        byte[] buffer = new byte[step];
 	        while (completed <= fileSize) {
@@ -60,4 +62,9 @@ public class ConnectedClientTransferFileThread extends Thread{
 			  e.printStackTrace();
 		  }
 	  }
+
+	private void restartOutputStream() throws IOException {
+		out.flush();
+		this.out = new DataOutputStream(s.getOutputStream());
+	}
 }
