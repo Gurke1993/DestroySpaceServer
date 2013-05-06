@@ -1,5 +1,7 @@
 package de.bplaced.mopfsoft;
 
+import java.io.File;
+import java.io.FileNotFoundException;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -16,7 +18,16 @@ public class GameController {
 
 	public GameController(String path, DestroySpaceServer server) {
 		this.server = server;
-		this.map = new Map(path);
+		try {
+			this.map = new Map(new File(path));
+		} catch (FileNotFoundException e) {
+			Map.copyDefaultMap();
+			try {
+				this.map = new Map(new File("maps"+System.getProperty("file.separator")+"defaultMap.map"));
+			} catch (FileNotFoundException e1) {
+				e1.printStackTrace();
+			}		}
+		
 		this.freePlayerEntitys = this.map.getPlayers();
 	}
 	

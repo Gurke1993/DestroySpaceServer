@@ -55,7 +55,6 @@ public class ConnectedClientTransferFileThread extends Thread{
 	        }
 	        System.out.println("Succesfully send file: "+path);
 	        fileInputStream.close();
-	        //thread.send("1:-1:1:"+file.getName());
 	        
 		  } catch (Exception e) {
 			  System.out.println("Could not send File: "+path);

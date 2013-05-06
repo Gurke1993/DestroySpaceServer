@@ -1,7 +1,9 @@
 package de.bplaced.mopfsoft;
 
 
+import java.io.BufferedReader;
 import java.io.File;
+import java.io.FileReader;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
@@ -141,6 +143,27 @@ public class DestroySpaceServer {
 			
 		if (action.equals("closeserver")) {
 			serverThread.stop();
+		} else 
+			
+		if (action.equals("getMapString")) {
+		System.out.println("Sending mapstring...");
+			
+		
+		String line;
+		try {
+			FileReader fr = new FileReader(new File(args.get("path")));
+			BufferedReader reader = new BufferedReader(fr);
+			while ((line = reader.readLine()) != null) {
+				serverThread.send("action=givemapstring:partofstring="+line+System.getProperty("line.separator")+":finished=false", player);
+			}
+			
+			reader.close();
+			fr.close();
+			
+		} catch (Exception e) {
+			e.printStackTrace();
+		}			
+			serverThread.send("action=givemapstring:finished=true", player);
 		}
 			
 			
