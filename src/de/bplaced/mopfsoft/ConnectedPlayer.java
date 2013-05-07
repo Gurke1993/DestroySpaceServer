@@ -11,8 +11,11 @@ public class ConnectedPlayer {
 	private final ConnectedClientThread client;
 	private Player player;
 	private String name = "PLAYER";
+	private boolean isHost;
 
-	public ConnectedPlayer(ServerThread server, Socket clientSocket, Socket fileClientSocket) throws IOException {
+	public ConnectedPlayer(ServerThread server, Socket clientSocket, Socket fileClientSocket, boolean isHost) throws IOException {
+		this.isHost = isHost;
+		
 		this.client = new ConnectedClientThread(server, clientSocket, this);
 		this.client.start();
 		
@@ -43,5 +46,9 @@ public class ConnectedPlayer {
 	
 	public void setName(String name) {
 		this.name = name;
+	}
+
+	public boolean isHost() {
+		return this.isHost;
 	}
 }

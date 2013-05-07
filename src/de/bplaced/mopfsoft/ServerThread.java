@@ -34,7 +34,7 @@ public class ServerThread implements Runnable {
 
 				destroySpaceServer.gameController
 						.addConnectedPlayer(new ConnectedPlayer(this,
-								clientSocket, fileClientSocket));
+								clientSocket, fileClientSocket, destroySpaceServer.gameController.getConnectedPlayers().size() == 0));
 			}
 		} catch (Exception e) {
 			e.printStackTrace();

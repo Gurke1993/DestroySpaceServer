@@ -110,7 +110,8 @@ public class DestroySpaceServer {
 					+":mapdescription="+gameController.getMap().getMapDescription()
 					+":amountofplayers="+gameController.getPlayerNames().size()
 					+":maxamountofplayers="+gameController.getMap().getPlayers().size()
-					+":players=";
+					+":players="
+					+":ishost="+player.isHost();
 			
 			List<String> playernames = gameController.getPlayerNames();
 			for (int i = 0; i<playernames.size(); i++) {
@@ -143,6 +144,11 @@ public class DestroySpaceServer {
 			
 		if (action.equals("closeserver")) {
 			serverThread.stop();
+		} else 
+			
+		if (action.equals("startgame")) {
+			System.out.println("Client requested start. Starting...");
+			gameController.startGame();
 		} else 
 			
 		if (action.equals("getMapString")) {

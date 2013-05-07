@@ -88,4 +88,19 @@ public class GameController {
 		}
 		return playerNames;
 	}
+
+	public void changeMap(String mapName) {
+		changeMap(new File("maps"+System.getProperty("file.separator")+mapName+".map"));
+	}
+
+	private void changeMap(File file) {
+		Map tempMap;
+		try {
+			tempMap = new Map(file);
+			this.map = tempMap;
+			server.serverThread.broadcast("action=mapchange");
+		} catch (FileNotFoundException e) {
+			System.out.println("Could not locate "+file.getName());
+		}
+	}
 }
