@@ -104,7 +104,9 @@ public class DestroySpaceServer {
 		} else
 			
 		if (action.equals("getlobbyinfo")) {
-			System.out.println("Client asked for game info. Answering..."+player.isHost());
+			
+			player.setName(args.get("playername"));
+			System.out.println("Client asked for game info. Answering...");
 			String answer = "action=givelobbyinfo"
 					+":mapname="+gameController.getMap().getMapName()
 					+":mapdescription="+gameController.getMap().getMapDescription()
@@ -120,6 +122,7 @@ public class DestroySpaceServer {
 			}
 			
 			serverThread.send(answer, player);
+			sendPlayerChangeMessage();
 		} else
 			
 		if (action.equals("getfiletransferinfo")) {
@@ -153,7 +156,8 @@ public class DestroySpaceServer {
 			
 		if (action.equals("clientdisconnect")) {
 			System.out.println("Client disconnecting... Sending updates...");
-			gameController.removeConnectedPlayer(player);
+			player.close();
+			sendPlayerChangeMessage();
 			
 			serverThread.broadcast("action=mapchange");
 		} else 
@@ -181,6 +185,24 @@ public class DestroySpaceServer {
 			
 			
 		
+	}
+	
+	public void sendPlayerChangeMessage() {
+		for (ConnectedPlayer player: gameController.getConnectedPlayers()) {
+		System.out.println("There has been a change in the player count... Letting people know..."+player.isHost());
+		String answer = "action=playerchange"
+				+":amountofplayers="+gameController.getPlayerNames().size()
+				+":maxamountofplayers="+gameController.getMap().getPlayers().size()
+				+":ishost="+player.isHost()
+				+":players="; //END OF MESSAGE
+		
+		List<String> playernames = gameController.getPlayerNames();
+		for (int i = 0; i<playernames.size(); i++) {
+			if (i!= 0) answer += ",";
+			answer += playernames.get(i);
+		}
+		serverThread.send(answer, player);
+	}
 	}
 
 }

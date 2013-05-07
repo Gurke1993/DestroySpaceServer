@@ -38,17 +38,18 @@ public class ConnectedClientThread extends Thread {
 
 			}
 		} catch (SocketException e1) {
-
+			player.close();
 		} catch (IOException e) {
 			e.printStackTrace();
 		}
-		server.closeConnection(this);
 	}
 
 	  public void send(String message) {
 	    try {
 	      out.writeUTF(message);
-	    }
+		} catch (SocketException e1) {
+		    player.close();
+		}
 	    catch(IOException e) {
 	      e.printStackTrace();
 	    }

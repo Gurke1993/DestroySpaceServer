@@ -106,6 +106,5 @@ public class GameController {
 
 	public void removeConnectedPlayer(ConnectedPlayer player) {
 		this.connectedPlayers.remove(player);
-		player.close();
 	}
 }

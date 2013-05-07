@@ -13,7 +13,6 @@ public class ConnectedClientTransferFileThread extends Thread{
 	  DataOutputStream out;
 	  DataInputStream in;
 	  ServerThread server;
-	@SuppressWarnings("unused")
 	private final ConnectedPlayer player;
 
 	  public ConnectedClientTransferFileThread(ServerThread server, Socket s, ConnectedPlayer player) throws IOException{
@@ -32,11 +31,10 @@ public class ConnectedClientTransferFileThread extends Thread{
 	      
 	    }
 	    } catch (SocketException e1) {
-	    	
+		    player.close();
 	    } catch(IOException e) {
 	      e.printStackTrace();
 	    }
-	    server.closeConnection(this);
 	  }
 	  
 	  public void sendFile(String path) {

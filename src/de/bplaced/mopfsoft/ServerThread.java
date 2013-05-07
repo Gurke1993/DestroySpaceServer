@@ -32,9 +32,13 @@ public class ServerThread implements Runnable {
 				Socket clientSocket = mainServer.accept();
 				Socket fileClientSocket = fileTransferServer.accept();
 
-				destroySpaceServer.gameController
-						.addConnectedPlayer(new ConnectedPlayer(this,
-								clientSocket, fileClientSocket, destroySpaceServer.gameController.getConnectedPlayers().size() == 0));
+				ConnectedPlayer player = new ConnectedPlayer(this,
+						clientSocket, fileClientSocket,
+						destroySpaceServer.gameController.getConnectedPlayers()
+								.size() == 0);
+				destroySpaceServer.gameController.addConnectedPlayer(player);
+				player.startThreads();
+				
 			}
 		} catch (Exception e) {
 			e.printStackTrace();
@@ -56,23 +60,11 @@ public class ServerThread implements Runnable {
 	synchronized void send(String message, ConnectedPlayer player) {
 		player.getClient().send(message);
 	}
-
-	public synchronized void closeConnection(ConnectedClientThread client) {
-		try {
-			client.s.close();
-		} catch (Exception e) {
-			e.printStackTrace();
-		}
+	
+	public synchronized void closeConnection(ConnectedPlayer player) {
+		player.close();
 	}
 
-	public synchronized void closeConnection(
-			ConnectedClientTransferFileThread client) {
-		try {
-			client.s.close();
-		} catch (Exception e) {
-			e.printStackTrace();
-		}
-	}
 
 	/** Stops the server and all his corresponding Sockets
 	 * 

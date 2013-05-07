@@ -19,11 +19,16 @@ public class ConnectedPlayer {
 		this.isHost = isHost;
 		
 		this.client = new ConnectedClientThread(server, clientSocket, this);
-		this.client.start();
+
 		
 		this.fileClient = new ConnectedClientTransferFileThread(server, fileClientSocket, this);
-		this.fileClient.start();
+
 		
+	}
+	
+	public void startThreads() {
+		this.client.start();
+		this.fileClient.start();
 	}
 	
 	public void setPlayer(Player player) {
@@ -55,7 +60,13 @@ public class ConnectedPlayer {
 	}
 
 	public void close() {
-		server.closeConnection(getClient());
-		server.closeConnection(getFileClient());
+		System.out.println("Closing connection to player...");
+		server.destroySpaceServer.gameController.removeConnectedPlayer(this);
+		try {
+			getClient().s.close();
+			getFileClient().s.close();
+		} catch (IOException e) {
+			e.printStackTrace();
+		}
 	}
 }
