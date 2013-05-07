@@ -4,6 +4,7 @@ import java.io.DataInputStream;
 import java.io.DataOutputStream;
 import java.io.IOException;
 import java.net.Socket;
+import java.net.SocketException;
 
 public class ConnectedClientThread extends Thread {
 	final Socket s;
@@ -36,11 +37,13 @@ public class ConnectedClientThread extends Thread {
 						text + ":timerecieved=" + System.currentTimeMillis(), player);
 
 			}
+		} catch (SocketException e1) {
+
 		} catch (IOException e) {
 			e.printStackTrace();
 		}
-	    server.closeConnection(this);
-	  }
+		server.closeConnection(this);
+	}
 
 	  public void send(String message) {
 	    try {

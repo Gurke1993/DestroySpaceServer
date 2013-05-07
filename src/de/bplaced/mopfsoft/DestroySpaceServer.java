@@ -104,14 +104,14 @@ public class DestroySpaceServer {
 		} else
 			
 		if (action.equals("getlobbyinfo")) {
-			System.out.println("Client asked for game info. Answering...");
+			System.out.println("Client asked for game info. Answering..."+player.isHost());
 			String answer = "action=givelobbyinfo"
 					+":mapname="+gameController.getMap().getMapName()
 					+":mapdescription="+gameController.getMap().getMapDescription()
 					+":amountofplayers="+gameController.getPlayerNames().size()
 					+":maxamountofplayers="+gameController.getMap().getPlayers().size()
-					+":players="
-					+":ishost="+player.isHost();
+					+":ishost="+player.isHost()
+					+":players="; //END OF MESSAGE
 			
 			List<String> playernames = gameController.getPlayerNames();
 			for (int i = 0; i<playernames.size(); i++) {
@@ -149,6 +149,13 @@ public class DestroySpaceServer {
 		if (action.equals("startgame")) {
 			System.out.println("Client requested start. Starting...");
 			gameController.startGame();
+		} else 
+			
+		if (action.equals("clientdisconnect")) {
+			System.out.println("Client disconnecting... Sending updates...");
+			gameController.removeConnectedPlayer(player);
+			
+			serverThread.broadcast("action=mapchange");
 		} else 
 			
 		if (action.equals("getMapString")) {

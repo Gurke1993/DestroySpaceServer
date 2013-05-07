@@ -6,6 +6,7 @@ import java.io.File;
 import java.io.FileInputStream;
 import java.io.IOException;
 import java.net.Socket;
+import java.net.SocketException;
 
 public class ConnectedClientTransferFileThread extends Thread{
 	Socket s;
@@ -30,8 +31,9 @@ public class ConnectedClientTransferFileThread extends Thread{
 	      while (in.read(array) != -1) {
 	      
 	    }
-	    }
-	    catch(IOException e) {
+	    } catch (SocketException e1) {
+	    	
+	    } catch(IOException e) {
 	      e.printStackTrace();
 	    }
 	    server.closeConnection(this);

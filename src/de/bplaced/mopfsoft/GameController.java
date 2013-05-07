@@ -103,4 +103,9 @@ public class GameController {
 			System.out.println("Could not locate "+file.getName());
 		}
 	}
+
+	public void removeConnectedPlayer(ConnectedPlayer player) {
+		this.connectedPlayers.remove(player);
+		player.close();
+	}
 }
