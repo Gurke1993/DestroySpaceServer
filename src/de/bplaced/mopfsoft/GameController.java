@@ -105,6 +105,8 @@ public class GameController {
 	}
 
 	public void removeConnectedPlayer(ConnectedPlayer player) {
+		this.freePlayerEntitys.add(player.getPlayer());
 		this.connectedPlayers.remove(player);
+		
 	}
 }

@@ -103,6 +103,10 @@ public class DestroySpaceServer {
 			this.gameController.getGameLoop().queueClientUpdate(args, player);
 		} else
 			
+		if (action.equals("playerchat")) {
+			serverThread.broadcast("action=playerchat:message="+args.get("message")+":player="+player.getName());
+		} else
+			
 		if (action.equals("getlobbyinfo")) {
 			
 			player.setName(args.get("playername"));
