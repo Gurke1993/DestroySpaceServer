@@ -79,7 +79,7 @@ public class DestroySpaceServer {
 	 */
 	public synchronized void analyseClientMessage(String message, ConnectedPlayer player) {
 		
-		System.out.println("ClientSays:"+message);
+		System.out.println(player.getName()+" says: "+message);
 		
 		//Structure message
 		Map<String,String> args= new HashMap<String,String>();
@@ -193,7 +193,6 @@ public class DestroySpaceServer {
 	
 	public void sendPlayerChangeMessage() {
 		for (ConnectedPlayer player: gameController.getConnectedPlayers()) {
-		System.out.println("There has been a change in the player count... Letting people know..."+player.isHost());
 		String answer = "action=playerchange"
 				+":amountofplayers="+gameController.getPlayerNames().size()
 				+":maxamountofplayers="+gameController.getMap().getPlayers().size()

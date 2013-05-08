@@ -7,6 +7,7 @@ import java.util.List;
 
 import de.bplaced.mopfsoft.entitys.Player;
 import de.bplaced.mopfsoft.map.Map;
+import de.bplaced.mopfsoft.map.MapToSmallException;
 
 public class GameController {
 	

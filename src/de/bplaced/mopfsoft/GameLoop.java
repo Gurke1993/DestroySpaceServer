@@ -59,7 +59,6 @@ public class GameLoop extends Thread {
 
 		// Broadcast game changes
 		for (GameChange gameChange : gameChanges) {
-			System.out.println("Broadcasting...");
 			gameController.getServer().serverThread.broadcast(gameChange.toString());
 		}
 		
@@ -84,7 +83,6 @@ public class GameLoop extends Thread {
 	 */
 	public void queueClientUpdate(Map<String, String> args,
 			ConnectedPlayer player) {
-		System.out.println("Got new client update... adding to stack...");
 		this.clientUpdateQueue.add(new ClientUpdate(player, args));
 		
 	}
