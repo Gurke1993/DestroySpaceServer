@@ -6,6 +6,7 @@ import java.util.List;
 import java.util.Map;
 import java.util.Queue;
 
+import de.bplaced.mopfsoft.entitys.Entity;
 import de.bplaced.mopfsoft.entitys.Player;
 import de.bplaced.mopfsoft.gamechanges.EntityChange;
 import de.bplaced.mopfsoft.gamechanges.GameChange;
@@ -22,6 +23,8 @@ public class GameLoop extends Thread {
 
 	// GameTick
 	public void run() {
+		
+		
 		while (true) {
 		long startTime = System.currentTimeMillis();
 
@@ -38,7 +41,10 @@ public class GameLoop extends Thread {
 			
 			args = clientUpdate.getArgs();
 			if (args.get("type").equals("move")) {
+				System.out.println("moving");
 				issuer.move(args.get("direction"));
+			} else if (args.get("type").equals("jump")) {
+				issuer.jump();
 			} else if (args.get("type").equals("moveanduse")) {
 				issuer.use(Integer.parseInt(args.get("tid")));
 				issuer.move(args.get("direction"));
@@ -54,6 +60,24 @@ public class GameLoop extends Thread {
 
 			if (issuer.hasMoved() && !gameChanges.contains(issuer)) {
 				gameChanges.add(new EntityChange(issuer, issuer));
+			}
+		}
+		
+		//Apply gravity
+		for (Entity e: gameController.getMap().getEntitys()) {
+			e.setInitialPosition();
+			
+			e.applyGravity();
+			
+			//Process gamefield collisions
+			e.resolveWorldCollisions();
+			
+			//Process entity collisions
+			e.resolveEntityCollisions();
+			
+			if (e.hasMoved() && !gameChanges.contains(e)) {
+//				System.out.println("has moved...");
+				gameChanges.add(new EntityChange(e, gameController.getMap().getWorld()));
 			}
 		}
 

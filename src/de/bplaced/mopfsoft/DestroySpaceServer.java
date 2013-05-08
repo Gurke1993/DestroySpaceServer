@@ -104,6 +104,14 @@ public class DestroySpaceServer {
 		} else
 			
 		if (action.equals("playerchat")) {
+			if (player.isHost()) {
+				if (args.get("message").startsWith("/")) {
+					if (args.get("message").startsWith("/changemap")) {
+						gameController.changeMap(args.get("message").split(" ",2)[1]);
+					}
+					return;
+				}
+			}
 			serverThread.broadcast("action=playerchat:message="+args.get("message")+":player="+player.getName());
 		} else
 			
