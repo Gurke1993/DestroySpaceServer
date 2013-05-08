@@ -22,27 +22,28 @@ public class GameLoop extends Thread {
 
 	// GameTick
 	public void run() {
+		while (true) {
 		long startTime = System.currentTimeMillis();
 
 		ClientUpdate clientUpdate;
 		Map <String,String> args;
 		List<GameChange> gameChanges = new ArrayList<GameChange>();
 
+		
 		while ((clientUpdate = clientUpdateQueue.poll()) != null) {
 			// Process new client update
 
 			Player issuer = clientUpdate.getIssuer().getPlayer();
 			issuer.setInitialPosition();
+			
 			args = clientUpdate.getArgs();
 			if (args.get("type").equals("move")) {
-				issuer.move(Integer.parseInt(args.get("x")),
-						Integer.parseInt(args.get("y")));
+				issuer.move(args.get("direction"));
 			} else if (args.get("type").equals("moveanduse")) {
-				issuer.use(Integer.parseInt(args.get("toolid")));
-				issuer.move(Integer.parseInt(args.get("x")),
-						Integer.parseInt(args.get("y")));
+				issuer.use(Integer.parseInt(args.get("tid")));
+				issuer.move(args.get("direction"));
 			} else if (args.get("type").equals("use")) {
-				issuer.use(Integer.parseInt(args.get("toolid")));
+				issuer.use(Integer.parseInt(args.get("tid")));
 			}
 
 			//Process gamefield collisions
@@ -58,6 +59,7 @@ public class GameLoop extends Thread {
 
 		// Broadcast game changes
 		for (GameChange gameChange : gameChanges) {
+			System.out.println("Broadcasting...");
 			gameController.getServer().serverThread.broadcast(gameChange.toString());
 		}
 		
@@ -67,6 +69,7 @@ public class GameLoop extends Thread {
 			Thread.sleep(loopTime-(System.currentTimeMillis()-startTime));
 		} catch (InterruptedException e) {
 			e.printStackTrace();
+		}
 		}
 
 	}

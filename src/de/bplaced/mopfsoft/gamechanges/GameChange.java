@@ -16,6 +16,6 @@ public abstract class GameChange {
 	
 	@Override
 	public String toString() {
-		return "action=gamechange:issuer="+issuer.toString();
+		return "action=gamechange:issuer="+issuer.toString()+":";
 	}
 }

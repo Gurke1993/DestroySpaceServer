@@ -14,7 +14,7 @@ public class GameController {
 	private DestroySpaceServer server;
 	private Map map;
 	private final List<ConnectedPlayer> connectedPlayers = new ArrayList<ConnectedPlayer>();
-	private final List<Player> freePlayerEntitys;
+	private List<Player> freePlayerEntitys;
 
 	public GameController(String path, DestroySpaceServer server) {
 		this.server = server;
@@ -97,10 +97,23 @@ public class GameController {
 		Map tempMap;
 		try {
 			tempMap = new Map(file);
+			
+			if (tempMap.getPlayers().size() < connectedPlayers.size()) {
+				throw new MapToSmallException();
+			}
+			
 			this.map = tempMap;
+			this.freePlayerEntitys = this.map.getPlayers();
+			
+			for (ConnectedPlayer player: connectedPlayers ) {
+				player.setPlayer(freePlayerEntitys.remove(0));
+			}
+			
 			server.serverThread.broadcast("action=mapchange");
 		} catch (FileNotFoundException e) {
 			System.out.println("Could not locate "+file.getName());
+		} catch (MapToSmallException e1) {
+			System.out.println("Map has to few player spots!");
 		}
 	}
 
