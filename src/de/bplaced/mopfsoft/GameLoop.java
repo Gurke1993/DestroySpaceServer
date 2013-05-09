@@ -41,15 +41,14 @@ public class GameLoop extends Thread {
 			
 			args = clientUpdate.getArgs();
 			if (args.get("type").equals("move")) {
-				System.out.println("moving");
 				issuer.move(args.get("direction"));
 			} else if (args.get("type").equals("jump")) {
 				issuer.jump();
 			} else if (args.get("type").equals("moveanduse")) {
-				issuer.use(Integer.parseInt(args.get("tid")));
+				gameChanges.addAll(issuer.useItem(Integer.parseInt(args.get("iid"))));
 				issuer.move(args.get("direction"));
 			} else if (args.get("type").equals("use")) {
-				issuer.use(Integer.parseInt(args.get("tid")));
+				gameChanges.addAll(issuer.useItem(Integer.parseInt(args.get("iid"))));
 			}
 
 			//Process gamefield collisions
