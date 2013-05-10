@@ -88,7 +88,7 @@ public class GameLoop extends Thread {
 		
 		//Wait if to fast
 		try {
-			Thread.sleep(loopTime-(System.currentTimeMillis()-startTime));
+			Thread.sleep(Math.max(0, loopTime-(System.currentTimeMillis()-startTime)));
 		} catch (InterruptedException e) {
 			e.printStackTrace();
 		}

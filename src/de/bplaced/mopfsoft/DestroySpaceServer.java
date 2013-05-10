@@ -150,6 +150,27 @@ public class DestroySpaceServer {
 			
 		} else 
 			
+		if (action.equals("readyto")) {
+				System.out.println("Client is ready");
+			player.setReady(args);
+			
+			boolean allready = true;
+			for (ConnectedPlayer cp: gameController.getConnectedPlayers()) {
+				if (!cp.getReady(args)) {
+					allready = false;
+				}
+			}
+			serverThread.broadcast(
+					"action=allplayersready"+
+					":type="+args.get("type")+
+					":areready="+allready);
+			
+			if (allready && args.get("type").equals("start")) {
+				gameController.startGame();
+			}
+			
+		} else 
+			
 		if (action.equals("starttransfer")) {
 			
 			System.out.println("Starting transfer...");
@@ -161,9 +182,9 @@ public class DestroySpaceServer {
 			serverThread.stop();
 		} else 
 			
-		if (action.equals("startgame")) {
-			System.out.println("Client requested start. Starting...");
-			gameController.startGame();
+		if (action.equals("loadupgame")) {
+			System.out.println("Client requested loadup. Broadcasting...");
+			serverThread.broadcast("action=loadupgame");
 		} else 
 			
 		if (action.equals("clientdisconnect")) {

@@ -41,7 +41,7 @@ public class GameController {
 		gameLoop.start();
 		System.out.println("Game started on the map "+map.getMapName()+" with "+connectedPlayers.size()+" playing!");
 		
-		server.serverThread.broadcast("action=loadupgame");
+		server.serverThread.broadcast("action=startgame");
 	}
 	
 	public Map getMap() {

@@ -2,6 +2,8 @@ package de.bplaced.mopfsoft;
 
 import java.io.IOException;
 import java.net.Socket;
+import java.util.HashMap;
+import java.util.Map;
 
 import de.bplaced.mopfsoft.entitys.Player;
 
@@ -13,6 +15,7 @@ public class ConnectedPlayer {
 	private String name = "PLAYER";
 	private boolean isHost;
 	private ServerThread server;
+	private final Map<String,Boolean> readyMap= new HashMap<String,Boolean>();
 
 	public ConnectedPlayer(ServerThread server, Socket clientSocket, Socket fileClientSocket, boolean isHost) throws IOException {
 		this.server = server;
@@ -68,5 +71,16 @@ public class ConnectedPlayer {
 		} catch (IOException e) {
 			e.printStackTrace();
 		}
+	}
+
+	public void setReady(Map<String, String> args) {
+		readyMap.put(args.get("type"), Boolean.parseBoolean(args.get("isready")));
+	}
+
+	public boolean getReady(Map<String, String> args) {
+		Boolean result = readyMap.get(args.get("type"));
+		if (result != null && result)
+			return true;
+		return false;
 	}
 }
