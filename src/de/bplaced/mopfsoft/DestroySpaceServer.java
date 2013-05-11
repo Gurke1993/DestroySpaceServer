@@ -8,6 +8,8 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
+import org.lwjgl.LWJGLUtil;
+
 import util.Util;
 
 public class DestroySpaceServer {
@@ -69,6 +71,12 @@ public class DestroySpaceServer {
 		
 	}
 	public static void main(String[] args) {
+		
+		//set libarypaths
+				System.setProperty("org.lwjgl.librarypath", new File(new File(System.getProperty("user.dir"), "native"), LWJGLUtil.getPlatformName()).getAbsolutePath());
+				System.setProperty("net.java.games.input.librarypath", System.getProperty("org.lwjgl.librarypath"));
+				
+				
 		new DestroySpaceServer(args);
 	}
 	
