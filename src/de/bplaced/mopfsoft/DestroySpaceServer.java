@@ -7,15 +7,21 @@ import org.lwjgl.LWJGLUtil;
 import org.newdawn.slick.util.Log;
 
 import de.bplaced.mopfsoft.gameLogic.GameController;
+import de.bplaced.mopfsoft.logging.CustomLogSystem;
 import de.bplaced.mopfsoft.network.CommandLineListener;
 import de.bplaced.mopfsoft.network.ServerThread;
 
 import util.Util;
 
 public class DestroySpaceServer {
-
 	
-	public DestroySpaceServer(String[] args) {
+	public static final int LOGGING_LEVEL = CustomLogSystem.HIGH;
+	public static final int BUILD = 1;
+	
+	private DestroySpaceServer(String[] args) {
+
+		
+		Log.setLogSystem(new CustomLogSystem(LOGGING_LEVEL));
 
 		String mainPortAsString = "27015";
 		String fileTransferPortAsString = "27016";
