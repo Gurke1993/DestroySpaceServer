@@ -1,6 +1,7 @@
-package de.bplaced.mopfsoft;
+package de.bplaced.mopfsoft.network;
 
 import java.util.Map;
+
 
 public class ClientUpdate {
 

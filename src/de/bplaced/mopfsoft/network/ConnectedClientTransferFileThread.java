@@ -1,4 +1,4 @@
-package de.bplaced.mopfsoft;
+package de.bplaced.mopfsoft.network;
 
 import java.io.DataInputStream;
 import java.io.DataOutputStream;
@@ -8,20 +8,21 @@ import java.io.IOException;
 import java.net.Socket;
 import java.net.SocketException;
 
+import org.newdawn.slick.util.Log;
+
+
 public class ConnectedClientTransferFileThread extends Thread{
 	Socket s;
 	  DataOutputStream out;
 	  DataInputStream in;
-	  ServerThread server;
 	private final ConnectedPlayer player;
 
-	  public ConnectedClientTransferFileThread(ServerThread server, Socket s, ConnectedPlayer player) throws IOException{
+	  public ConnectedClientTransferFileThread(Socket s, ConnectedPlayer player) throws IOException{
 		  this.player = player;
-	    this.server = server;
-	    this.s = s;
-	    out = new DataOutputStream(s.getOutputStream());
-	    in = new DataInputStream(s.getInputStream());
-	      System.out.println("FileTransfer is enabled for "+s.getInetAddress()+" at "+s.getLocalPort());
+		  this.s = s;
+		  out = new DataOutputStream(s.getOutputStream());
+		  in = new DataInputStream(s.getInputStream());
+		  Log.info("FileTransfer is enabled for "+s.getInetAddress()+" at "+s.getLocalPort());
 	  }
 
 	  public void run() {
@@ -33,7 +34,7 @@ public class ConnectedClientTransferFileThread extends Thread{
 	    } catch (SocketException e1) {
 		    player.close();
 	    } catch(IOException e) {
-	      e.printStackTrace();
+	    	Log.error(e);
 	    }
 	  }
 	  
@@ -53,12 +54,11 @@ public class ConnectedClientTransferFileThread extends Thread{
 	            out.write(buffer);
 	            completed += step;
 	        }
-	        System.out.println("Succesfully send file: "+path);
+	        Log.info("Succesfully send file: "+path+" to "+player.getName());
 	        fileInputStream.close();
 	        
 		  } catch (Exception e) {
-			  System.out.println("Could not send File: "+path);
-			  e.printStackTrace();
+			  Log.error("Could not send File: "+path,e);
 		  }
 	  }
 

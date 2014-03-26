@@ -1,26 +1,42 @@
-package de.bplaced.mopfsoft;
+package de.bplaced.mopfsoft.gameLogic;
 
 import java.io.File;
 import java.io.FileNotFoundException;
 import java.util.ArrayList;
 import java.util.List;
 
+import org.newdawn.slick.util.Log;
+
 import de.bplaced.mopfsoft.entitys.Player;
 import de.bplaced.mopfsoft.map.Map;
 import de.bplaced.mopfsoft.map.MapToSmallException;
+import de.bplaced.mopfsoft.network.ConnectedPlayer;
+import de.bplaced.mopfsoft.network.ServerThread;
 
 public class GameController {
 	
+	private static GameController instance = null;
+	
 	private GameLoop gameLoop;
-	private DestroySpaceServer server;
 	private Map map;
 	private final List<ConnectedPlayer> connectedPlayers = new ArrayList<ConnectedPlayer>();
 	private List<Player> freePlayerEntitys;
+	
+	public static void init(String mapPath) {
+		setInstance(new GameController(mapPath));
+	}
 
-	public GameController(String path, DestroySpaceServer server) {
-		this.server = server;
+	private static void setInstance(GameController gameController) {
+		instance = gameController;
+	}
+	
+	public static GameController getInstance() {
+		return instance;
+	}
+
+	private GameController(String mapPath) {
 		try {
-			this.map = new Map(new File(path));
+			this.map = new Map(new File(mapPath));
 		} catch (FileNotFoundException e) {
 			Map.copyDefaultMap();
 			try {
@@ -39,9 +55,8 @@ public class GameController {
 		//Starts the game
 		this.gameLoop = new GameLoop(this);
 		gameLoop.start();
-		System.out.println("Game started on the map "+map.getMapName()+" with "+connectedPlayers.size()+" playing!");
-		
-		server.serverThread.broadcast("action=startgame");
+		Log.info("Game started on the map "+map.getMapName()+" with "+connectedPlayers.size()+" playing!");
+		ServerThread.getInstance().broadcast("action=startgame");
 	}
 	
 	public Map getMap() {
@@ -50,10 +65,6 @@ public class GameController {
 
 	public GameLoop getGameLoop() {
 		return this.gameLoop;
-	}
-
-	public DestroySpaceServer getServer() {
-		return server;
 	}
 
 	/**
@@ -110,11 +121,11 @@ public class GameController {
 				player.setPlayer(freePlayerEntitys.remove(0));
 			}
 			
-			server.serverThread.broadcast("action=mapchange");
+			ServerThread.getInstance().broadcast("action=mapchange");
 		} catch (FileNotFoundException e) {
-			System.out.println("Could not locate "+file.getName());
+			Log.error("Could not locate "+file.getName());
 		} catch (MapToSmallException e1) {
-			System.out.println("Map has to few player spots!");
+			Log.error("Map has to few player spots!");
 		}
 	}
 

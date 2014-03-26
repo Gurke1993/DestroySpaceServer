@@ -1,4 +1,4 @@
-package de.bplaced.mopfsoft;
+package de.bplaced.mopfsoft.gameLogic;
 
 import java.util.ArrayList;
 import java.util.LinkedList;
@@ -10,6 +10,9 @@ import de.bplaced.mopfsoft.entitys.Entity;
 import de.bplaced.mopfsoft.entitys.Player;
 import de.bplaced.mopfsoft.gamechanges.EntityChange;
 import de.bplaced.mopfsoft.gamechanges.GameChange;
+import de.bplaced.mopfsoft.network.ClientUpdate;
+import de.bplaced.mopfsoft.network.ConnectedPlayer;
+import de.bplaced.mopfsoft.network.ServerThread;
 
 public class GameLoop extends Thread {
 
@@ -82,7 +85,7 @@ public class GameLoop extends Thread {
 
 		// Broadcast game changes
 		for (GameChange gameChange : gameChanges) {
-			gameController.getServer().serverThread.broadcast(gameChange.toString());
+			ServerThread.getInstance().broadcast(gameChange.toString());
 		}
 		
 		

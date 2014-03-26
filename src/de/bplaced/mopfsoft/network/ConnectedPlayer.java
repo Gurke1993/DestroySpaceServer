@@ -1,11 +1,14 @@
-package de.bplaced.mopfsoft;
+package de.bplaced.mopfsoft.network;
 
 import java.io.IOException;
 import java.net.Socket;
 import java.util.HashMap;
 import java.util.Map;
 
+import org.newdawn.slick.util.Log;
+
 import de.bplaced.mopfsoft.entitys.Player;
+import de.bplaced.mopfsoft.gameLogic.GameController;
 
 public class ConnectedPlayer {
 
@@ -14,17 +17,15 @@ public class ConnectedPlayer {
 	private Player player;
 	private String name = "PLAYER";
 	private boolean isHost;
-	private ServerThread server;
 	private final Map<String,Boolean> readyMap= new HashMap<String,Boolean>();
 
-	public ConnectedPlayer(ServerThread server, Socket clientSocket, Socket fileClientSocket, boolean isHost) throws IOException {
-		this.server = server;
+	public ConnectedPlayer(Socket clientSocket, Socket fileClientSocket, boolean isHost) throws IOException {
 		this.isHost = isHost;
 		
-		this.client = new ConnectedClientThread(server, clientSocket, this);
+		this.client = new ConnectedClientThread(clientSocket, this);
 
 		
-		this.fileClient = new ConnectedClientTransferFileThread(server, fileClientSocket, this);
+		this.fileClient = new ConnectedClientTransferFileThread(fileClientSocket, this);
 
 		
 	}
@@ -63,11 +64,13 @@ public class ConnectedPlayer {
 	}
 
 	public void close() {
-		System.out.println("Closing connection to player...");
-		server.destroySpaceServer.gameController.removeConnectedPlayer(this);
+		Log.info("Closing connection to player...");
+		GameController.getInstance().removeConnectedPlayer(this);
 		try {
 			getClient().s.close();
+			getClient().interrupt();
 			getFileClient().s.close();
+			getFileClient().interrupt();
 		} catch (IOException e) {
 			e.printStackTrace();
 		}
