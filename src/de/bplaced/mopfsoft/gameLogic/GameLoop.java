@@ -6,10 +6,13 @@ import java.util.List;
 import java.util.Map;
 import java.util.Queue;
 
+
 import de.bplaced.mopfsoft.entitys.Entity;
 import de.bplaced.mopfsoft.entitys.Player;
-import de.bplaced.mopfsoft.gamechanges.EntityChange;
 import de.bplaced.mopfsoft.gamechanges.GameChange;
+import de.bplaced.mopfsoft.message.GameChangeUtil;
+import de.bplaced.mopfsoft.message.GameEntityChange;
+import de.bplaced.mopfsoft.message.Message;
 import de.bplaced.mopfsoft.network.ClientUpdate;
 import de.bplaced.mopfsoft.network.ConnectedPlayer;
 import de.bplaced.mopfsoft.network.ServerThread;
@@ -33,7 +36,7 @@ public class GameLoop extends Thread {
 
 		ClientUpdate clientUpdate;
 		Map <String,String> args;
-		List<GameChange> gameChanges = new ArrayList<GameChange>();
+		List<Message> messages = new ArrayList<Message>();
 
 		
 		while ((clientUpdate = clientUpdateQueue.poll()) != null) {
@@ -48,10 +51,14 @@ public class GameLoop extends Thread {
 			} else if (args.get("type").equals("jump")) {
 				issuer.jump();
 			} else if (args.get("type").equals("moveanduse")) {
-				gameChanges.addAll(issuer.useItem(Integer.parseInt(args.get("iid"))));
+				for (GameChange gameChange: issuer.useItem(Integer.parseInt(args.get("iid")))) {
+					messages.add(GameChangeUtil.getGameChangeAsMessage(gameChange));
+				}
 				issuer.move(args.get("direction"));
 			} else if (args.get("type").equals("use")) {
-				gameChanges.addAll(issuer.useItem(Integer.parseInt(args.get("iid"))));
+				for (GameChange gameChange: issuer.useItem(Integer.parseInt(args.get("iid")))) {
+					messages.add(GameChangeUtil.getGameChangeAsMessage(gameChange));
+				}
 			}
 
 			//Process gamefield collisions
@@ -60,8 +67,8 @@ public class GameLoop extends Thread {
 			//Process entity collisions
 			issuer.resolveEntityCollisions();
 
-			if (issuer.hasMoved() && !gameChanges.contains(issuer)) {
-				gameChanges.add(new EntityChange(issuer, issuer));
+			if (issuer.hasMoved() && !messages.contains(issuer)) {
+				messages.add(new GameEntityChange(issuer, issuer));
 			}
 		}
 		
@@ -70,22 +77,20 @@ public class GameLoop extends Thread {
 			e.setInitialPosition();
 			
 			e.applyGravity();
-			
 			//Process gamefield collisions
 			e.resolveWorldCollisions();
 			
 			//Process entity collisions
 			e.resolveEntityCollisions();
 			
-			if (e.hasMoved() && !gameChanges.contains(e)) {
-//				System.out.println("has moved...");
-				gameChanges.add(new EntityChange(e, gameController.getMap().getWorld()));
+			if (e.hasMoved() && !messages.contains(e)) {
+				messages.add(new GameEntityChange(e, gameController.getMap().getWorld()));
 			}
 		}
 
 		// Broadcast game changes
-		for (GameChange gameChange : gameChanges) {
-			ServerThread.getInstance().broadcast(gameChange.toString());
+		for (Message message : messages) {
+			ServerThread.getInstance().broadcast(message+"");
 		}
 		
 		

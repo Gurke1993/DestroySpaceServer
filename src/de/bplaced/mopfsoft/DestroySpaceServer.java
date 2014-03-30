@@ -29,7 +29,7 @@ public class DestroySpaceServer {
 		
 		
 
-		System.out.println("Setting up server...");
+		Log.info("Setting up server...");
 		for (int i = 0; i < args.length; i++) {
 			if (args[i] == "-mainport") {
 				if (Util.isInteger(args[i+1])) {
@@ -56,7 +56,7 @@ public class DestroySpaceServer {
 			Log.info("Server is set.");
 			Log.info("type 'stop' to stop the server...");
 		} catch (Exception e){
-			Log.error("Could not set up Server at port "+"portAsString"+"... terminating...",e);
+			Log.error("Could not set up Server at ports "+mainPortAsString+" and "+fileTransferPortAsString+"... terminating...",e);
 			System.exit(-1);
 		}
 		

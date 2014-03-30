@@ -10,6 +10,7 @@ import org.newdawn.slick.util.Log;
 import de.bplaced.mopfsoft.entitys.Player;
 import de.bplaced.mopfsoft.map.Map;
 import de.bplaced.mopfsoft.map.MapToSmallException;
+import de.bplaced.mopfsoft.message.LobbyMapChange;
 import de.bplaced.mopfsoft.network.ConnectedPlayer;
 import de.bplaced.mopfsoft.network.ServerThread;
 
@@ -56,7 +57,6 @@ public class GameController {
 		this.gameLoop = new GameLoop(this);
 		gameLoop.start();
 		Log.info("Game started on the map "+map.getMapName()+" with "+connectedPlayers.size()+" playing!");
-		ServerThread.getInstance().broadcast("action=startgame");
 	}
 	
 	public Map getMap() {
@@ -121,7 +121,7 @@ public class GameController {
 				player.setPlayer(freePlayerEntitys.remove(0));
 			}
 			
-			ServerThread.getInstance().broadcast("action=mapchange");
+			ServerThread.getInstance().broadcast(new LobbyMapChange()+"");
 		} catch (FileNotFoundException e) {
 			Log.error("Could not locate "+file.getName());
 		} catch (MapToSmallException e1) {

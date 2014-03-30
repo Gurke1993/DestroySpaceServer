@@ -77,11 +77,11 @@ public class ConnectedPlayer {
 	}
 
 	public void setReady(Map<String, String> args) {
-		readyMap.put(args.get("type"), Boolean.parseBoolean(args.get("isready")));
+		readyMap.put(args.get("ForWhat"), Boolean.parseBoolean(args.get("Ready")));
 	}
 
 	public boolean getReady(Map<String, String> args) {
-		Boolean result = readyMap.get(args.get("type"));
+		Boolean result = readyMap.get(args.get("ForWhat"));
 		if (result != null && result)
 			return true;
 		return false;
